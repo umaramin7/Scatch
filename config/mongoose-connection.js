@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const dbgr = require('debug')('development:mongoose');
 const config = require('config');
-mongoose.connect(`${config.get('MONGODB_URI')}/scratch`)
+mongoose.connect(`${config.get('MONGODB_URI')}/Cluster0`)
 .then(() => {
     dbgr("MongoDB connected successfully");
 })
