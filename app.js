@@ -5,6 +5,7 @@ const userRouter = require('./routes/userRouter');
 const productRouter = require('./routes/productRouter');
 const ownerRouter = require('./routes/ownerRouter');
 const indexRouter = require('./routes/index');
+const accountRouter = require('./routes/account');
 const expresssession = require('express-session');
 const flash = require('connect-flash');
 
@@ -30,6 +31,7 @@ app.use("/owners", ownerRouter);
 app.use("/users", userRouter);
 app.use("/products", productRouter);
 app.use("/", indexRouter);
+app.use('/account', accountRouter);
 
 
 app.listen(3000);
