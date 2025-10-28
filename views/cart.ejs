@@ -1,0 +1,87 @@
+<%- include('./partials/header') %>
+<div class="w-full min-h-screen flex items-start px-20 py-20 gap-10">
+  <!-- Left: Products List -->
+  <div class="w-[70%] flex gap-5 overflow-x-scroll scrollbar-hide">
+    <% products.forEach(function(product, index){ %>
+      <div class="min-w-[300px] rounded-md overflow-hidden relative">
+        
+        <!-- 🖼️ Product Image (arrows removed) -->
+        <div class="relative w-full flex justify-center items-center h-80 bg-[<%= product.bgcolor %>]">
+          <img id="product-image-<%= index %>" class="h-[12rem] transition-all duration-500"
+            src="data:image/jpeg;base64,<%= product.image.toString('base64') %>" alt="">
+        </div>
+
+        <!-- 🛍️ Product Name + Quantity Control -->
+        <div class="w-full flex justify-between px-5 py-4 bg-[<%= product.panelcolor %>] text-[<%= product.textcolor %>]">
+          <h3 class="text-2xl font-semibold"><%= product.name %></h3>
+          <div class="flex items-center gap-2">
+            <button onclick="decreaseQty(<%= index %>)" 
+              class="w-7 h-7 bg-white text-black flex rounded-full items-center justify-center text-lg font-bold">−</button>
+
+            <div id="qty-<%= index %>" class="px-2 py-1 rounded-md bg-white text-black">1</div>
+
+            <button onclick="increaseQty(<%= index %>)" 
+              class="w-7 h-7 bg-white text-black flex rounded-full items-center justify-center text-lg font-bold">+</button>
+          </div>
+        </div>
+
+        <!-- 💰 Item Total -->
+        <div class="flex items-center justify-between px-5 py-3 bg-zinc-200">
+          <h4 class="text-lg">Net Total</h4>
+          <h2 id="item-total-<%= index %>" class="text-lg font-semibold">₹<%= product.price %></h2>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+
+  <!-- 📦 Combined Bill -->
+  <div class="w-[30%] p-6 bg-zinc-100 rounded-md">
+    <h3 class="text-2xl mb-3 font-semibold">Price Breakdown</h3>
+    <% 
+      let totalPrice = 0; 
+      let totalDiscount = 0;
+      products.forEach(p => { totalPrice += p.price; totalDiscount += Number(p.discount || 0); });
+      let platformFee = 20;
+      let finalAmount = (totalPrice + platformFee) - totalDiscount;
+    %>
+    <div class="flex justify-between mb-2"><span>Total MRP:</span> <span id="total-price">₹<%= totalPrice %></span></div>
+    <div class="flex justify-between mb-2"><span>Discount:</span> <span id="discount">- ₹<%= totalDiscount %></span></div>
+    <div class="flex justify-between mb-2"><span>Platform Fee:</span> <span>₹<%= platformFee %></span></div>
+    <div class="flex justify-between mb-2"><span>Shipping:</span> <span>FREE</span></div>
+    <hr class="my-3 border-zinc-400">
+    <div class="flex justify-between text-lg font-semibold text-green-600">
+      <span>Total Amount:</span> <span id="final-amount">₹<%= finalAmount %></span>
+    </div>
+    <button class="mt-5 w-full bg-blue-500 text-white py-2 rounded-md">Proceed to Checkout</button>
+  </div>
+</div>
+
+<script>
+  // ➕➖ Quantity Control
+  const prices = <%- JSON.stringify(products.map(p => p.price)) %>;
+  let quantities = new Array(prices.length).fill(1);
+
+  function increaseQty(i) {
+    quantities[i]++;
+    updateTotals(i);
+  }
+
+  function decreaseQty(i) {
+    if (quantities[i] > 1) quantities[i]--;
+    updateTotals(i);
+  }
+
+  function updateTotals(i) {
+    const itemTotal = prices[i] * quantities[i];
+    document.getElementById(`qty-${i}`).innerText = quantities[i];
+    document.getElementById(`item-total-${i}`).innerText = `₹${itemTotal}`;
+
+    // Update grand total
+    const total = prices.reduce((sum, p, index) => sum + p * quantities[index], 0);
+    document.getElementById("total-price").innerText = `₹${total}`;
+    const final = total + 20; // + platform fee
+    document.getElementById("final-amount").innerText = `₹${final}`;
+  }
+</script>
+
+<%- include('./partials/footer') %>

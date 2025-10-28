@@ -3,11 +3,11 @@ const mongoose=require("mongoose");
 const ownerSchema=new mongoose.Schema({
     fullname:{
         type: String,
-        minlength: 3,
+        minlength:3,
         trim :true
     },
-    email: string,
-    password: string,
+    email:String,
+    password:String,
     
     
     product:{
@@ -15,7 +15,7 @@ const ownerSchema=new mongoose.Schema({
         default:[]
     },
     gstin: String,
-    picture: string
+    picture:String
 });
 const userModel=mongoose.model("owner",ownerSchema);
 module.exports=userModel;
